@@ -1,0 +1,12 @@
+.root {
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  border-radius: 1rem;
+
+  @include hover {
+    // color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
+  }
+}
+
+.label {
+  font-size: var(--mantine-spacing-md);
+}

@@ -1,0 +1,9 @@
+.debug {
+  border: 2px solid red;
+}
+
+.debugAll {
+  * {
+    border: 2px solid red;
+  }
+}

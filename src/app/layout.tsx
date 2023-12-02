@@ -1,6 +1,7 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@src/styles/globals.scss';
+import '@mantine/tiptap/styles.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 

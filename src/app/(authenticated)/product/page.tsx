@@ -1,8 +1,9 @@
 'use client';
 
-import { Table } from '@mantine/core';
+import { Box, Table } from '@mantine/core';
 import * as Types from '@prisma/client';
 import InfiniteTable from '@/src/components/InfiniteTable';
+import ProductForm from '@/src/components/forms/product';
 
 export default function Product() {
   const columns = ['Title'];
@@ -17,12 +18,15 @@ export default function Product() {
 
   return (
     <>
-      <InfiniteTable
+      <Box>
+        <ProductForm />
+      </Box>
+      {/* <InfiniteTable
         fetchApi="api/product"
         queryKey={['product']}
         columns={columns}
         render={render}
-      />
+      /> */}
     </>
   );
 }

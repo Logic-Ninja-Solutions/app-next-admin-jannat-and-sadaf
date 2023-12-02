@@ -7,3 +7,17 @@
     border: 2px solid red;
   }
 }
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.clickable:hover {
+  color: var(--mantine-color-blue-4);
+}
+
+.clickable:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Add a subtle box shadow on click */
+}

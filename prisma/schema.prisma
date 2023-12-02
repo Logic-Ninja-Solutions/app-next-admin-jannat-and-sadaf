@@ -8,6 +8,8 @@ generator client {
 }
 
 model Product {
-    id    String @id @default(auto()) @map("_id") @db.ObjectId
-    title String
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    title     String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

@@ -2,17 +2,30 @@ import * as Types from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 import { PrismaClientValidationError } from '@prisma/client/runtime/library';
-
+import { getPaginatedData } from '@src/utils/api/pagination';
 import { prisma } from '@/server';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const products = await prisma.product.findMany();
-    return NextResponse.json(products.reverse());
-  } catch {
-    return NextResponse.json('error', {
-      status: 500,
-    });
+    const url = new URL(req.url);
+
+    const take = url.searchParams.get('take');
+    const lastCursor = url.searchParams.get('lastCursor');
+    const data = await getPaginatedData<Types.Product>(
+      prisma.product.findMany,
+      take as string,
+      lastCursor as string
+    );
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error: any) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -35,6 +48,9 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  // await prisma.product.deleteMany({});
+  // return NextResponse.json({ status: 'ok' });
+
   const query = new URL(req.url).searchParams;
   const id = query.get('id') as string;
   try {

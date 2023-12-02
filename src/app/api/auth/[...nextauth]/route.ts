@@ -26,6 +26,7 @@ async function getUser(email?: string, password?: string): Promise<User | null> 
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'credentials',

@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Avatar, Group, Text, UnstyledButton, rem } from '@mantine/core';
+import { ActionIcon, Avatar, Card, Group, Text, rem } from '@mantine/core';
 import { signOut, useSession } from 'next-auth/react';
 
 import { IconLogout } from '@tabler/icons-react';
@@ -9,7 +9,7 @@ import classes from './UserButton.module.scss';
 export function UserButton() {
   const { data } = useSession();
   return (
-    <UnstyledButton className={classes.user}>
+    <Card className={classes.user}>
       <Group>
         <Avatar radius="xl" />
 
@@ -27,6 +27,6 @@ export function UserButton() {
           <IconLogout style={{ width: rem(14), height: rem(14) }} stroke={1.5} />
         </ActionIcon>
       </Group>
-    </UnstyledButton>
+    </Card>
   );
 }

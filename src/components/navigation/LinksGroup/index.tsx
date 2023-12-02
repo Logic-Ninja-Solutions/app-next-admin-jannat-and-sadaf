@@ -33,9 +33,8 @@ export function LinksGroup({ links }: Props) {
       {links.map((link, index) => {
         const isActive = pathname === link.link || active === index;
         return (
-          <Box>
+          <Box key={index}>
             <NavLink
-              key={index}
               childrenOffset={30}
               className={clsx(isActive && classes.activeLink)}
               defaultOpened
@@ -56,10 +55,9 @@ export function LinksGroup({ links }: Props) {
                 const isSubActive = pathname === item.link || activeSub === subIndex;
 
                 return (
-                  <Box pl="md" key={item.label} className={classes.subLinkContainer}>
+                  <Box key={subIndex} pl="md" className={classes.subLinkContainer}>
                     <NavLink
                       active={isSubActive}
-                      key={item.label}
                       onClick={() => {
                         setActiveSub(subIndex);
                         setActive(undefined);

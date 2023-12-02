@@ -1,15 +1,14 @@
 'use client';
 
-import { AppShell, Burger, Group, ScrollArea, useMantineTheme } from '@mantine/core';
+import { AppShell, Burger, Group, ScrollArea } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Navbar } from '../../Navbar';
-import { UserButton } from '../../UserButton';
 import { Logo } from '../../core/Logo';
 import ThemeSwitch from '../../core/ThemeSwitch';
+import { Navbar } from '../../navigation/Navbar';
+import { UserButton } from '../../navigation/UserButton';
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
-  const theme = useMantineTheme();
 
   return (
     <>

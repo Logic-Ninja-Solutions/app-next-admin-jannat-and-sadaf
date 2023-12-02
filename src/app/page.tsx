@@ -26,5 +26,5 @@ export default function Home() {
     return <LoadingAuth text="authenticating" />;
   }
 
-  return <></>;
+  return <>Home</>;
 }

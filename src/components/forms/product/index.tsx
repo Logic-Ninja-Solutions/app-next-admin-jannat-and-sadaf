@@ -28,6 +28,7 @@ import { useEffect } from 'react';
 import { createInInfiniteQuery, updateInInfiniteQuery } from '@/src/utils/api/pagination';
 import TextEditor from '../../core/RichTextEditor';
 import { ProductActionType } from '@/src/actions/product/enums';
+import { createSample } from '@/src/actions/product';
 
 interface ProductVariant {
   size: string;
@@ -227,8 +228,20 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
     form.insertListItem('images', '');
   }
 
+  const mutation = useMutation({
+    mutationKey: ['sample-products'],
+    mutationFn: createSample,
+  });
+
+  async function createHardCodedProducts() {
+    await mutation.mutateAsync();
+  }
+
   return (
     <>
+      {/* <Button loading={mutation.isPending} onClick={createHardCodedProducts}>
+        Create Sample
+      </Button> */}
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack gap={10}>
           <Card withBorder shadow="sm" radius="md">

@@ -16,7 +16,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect } from 'react';
-import Types from '@/src/types/prisma';
+import Types, { UserWithAddresses } from '@/src/types/prisma';
 import { createInInfiniteQuery, updateInInfiniteQuery } from '@/src/utils/api/pagination';
 
 interface UserFormValues {
@@ -25,7 +25,6 @@ interface UserFormValues {
   firstName: string;
   lastName: string;
   phone: string;
-  addresses: Types.Address[];
   emailVerified: boolean;
   isStaff: boolean;
   isActive: boolean;
@@ -46,7 +45,6 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
       firstName: '',
       lastName: '',
       phone: '',
-      addresses: [],
       emailVerified: false,
       isStaff: true,
       isActive: true,
@@ -126,7 +124,6 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
         firstName: editUser.firstName,
         lastName: editUser.lastName,
         phone: editUser.phone,
-        addresses: editUser.addresses,
         emailVerified: editUser.emailVerified,
         isStaff: editUser.isStaff,
         isActive: editUser.isActive,
@@ -134,87 +131,15 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
     }
   }, [editUser]);
 
-  const addressFields = form.values.addresses.map((item, index) => (
-    <Card.Section key={index} p="sm">
-      <Flex justify="center" align="center" wrap="wrap" gap={10}>
-        <Card w="1000px" withBorder shadow="xl" radius="md">
-          <Stack gap={10} p="sm">
-            <TextInput
-              label="Address Line 1"
-              placeholder="123 Main St"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.addressLine1`)}
-            />
-            <TextInput
-              label="Address Line 2"
-              placeholder="Apt 456"
-              {...form.getInputProps(`addresses.${index}.addressLine2`)}
-            />
-            <TextInput
-              label="Area"
-              placeholder="Downtown"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.area`)}
-            />
-            <TextInput
-              label="City"
-              placeholder="City"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.city`)}
-            />
-            <TextInput
-              label="First Name"
-              placeholder="John"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.firstName`)}
-            />
-            <TextInput
-              label="Last Name"
-              placeholder="Doe"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.lastName`)}
-            />
-            <TextInput
-              label="Contact Number"
-              placeholder="123-456-7890"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.contactNumber`)}
-            />
-            <TextInput
-              label="ZIP Code"
-              placeholder="12345"
-              withAsterisk
-              {...form.getInputProps(`addresses.${index}.zipCode`)}
-            />
-            <TextInput
-              label="Landmark"
-              placeholder="Nearby Park"
-              {...form.getInputProps(`addresses.${index}.landmark`)}
-            />
-          </Stack>
-        </Card>
-        <Box maw={30}>
-          <IconTrash
-            onClick={() => form.removeListItem('addresses', index)}
-            className="clickable"
-            color={theme.colors.red[3]}
-          />
-        </Box>
-      </Flex>
-    </Card.Section>
-  ));
-
   function addAddress() {
     form.insertListItem('addresses', {
       addressLine1: '',
       addressLine2: '',
-      area: '',
       city: '',
       firstName: '',
       lastName: '',
       contactNumber: '',
       zipCode: '',
-      landmark: '',
     });
   }
 
@@ -259,19 +184,6 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
               placeholder="123-456-7890"
               {...form.getInputProps('phone')}
             />
-
-            <Card withBorder shadow="sm" radius="md" mt="xs" mb="xs">
-              <Card.Section withBorder inheritPadding py="xs">
-                Addresses
-              </Card.Section>
-              <Card.Section>
-                <Flex p="sm" className="clickable" onClick={addAddress}>
-                  <IconPlus />
-                  <Text>Add Address </Text>
-                </Flex>
-              </Card.Section>
-              {addressFields}
-            </Card>
 
             <Stack gap={10}>
               <Checkbox

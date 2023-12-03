@@ -7,20 +7,23 @@ import { IconCubePlus, IconEdit, IconList } from '@tabler/icons-react';
 import { useState } from 'react';
 import UserForm from '@/src/components/forms/user';
 import InfiniteTable from '@/src/components/InfiniteTable';
+import { UserWithAddresses } from '@/src/types/prisma';
+
+type User = UserWithAddresses;
 
 export default function User() {
   const columns = ['First Name', 'Last Name', 'Email', 'Active', 'Phone Number', 'Actions'];
-  const [editUser, setEditUser] = useState<Types.User | undefined>(undefined);
+  const [editUser, setEditUser] = useState<User | undefined>(undefined);
 
   const [activeTab, setActiveTab] = useState<'list' | 'create' | 'update'>('list');
 
-  function onEditClick(user: Types.User) {
+  function onEditClick(user: User) {
     setEditUser(undefined);
     setActiveTab('update');
     setEditUser(user);
   }
 
-  function render(user: Types.User) {
+  function render(user: User) {
     return (
       <Table.Tr key={user.id}>
         <Table.Td>

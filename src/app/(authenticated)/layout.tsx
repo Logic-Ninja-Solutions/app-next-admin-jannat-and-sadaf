@@ -1,12 +1,28 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
+import { isAuthenticated } from '@/src/actions/auth';
+import { AuthAction } from '@/src/actions/auth/enum';
+import LoadingAuth from '@/src/components/core/LoadingAuth';
 import DefaultLayout from '@/src/components/layouts/DefaultLayout';
-import AuthProvider from '@/src/providers/Auth';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthProvider>
-      <DefaultLayout>{children}</DefaultLayout>
-    </AuthProvider>
-  );
+  const {
+    data: authData,
+    isSuccess,
+    isLoading,
+  } = useQuery({
+    queryKey: [AuthAction.auth],
+    queryFn: () => isAuthenticated(),
+  });
+
+  if (isLoading) {
+    return <LoadingAuth text="authenticating" />;
+  }
+
+  return <DefaultLayout>{children}</DefaultLayout>;
 }
 
 RootLayout.requireAuth = true;

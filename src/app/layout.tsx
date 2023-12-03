@@ -25,14 +25,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ColorSchemeScript />
       </head>
       <body className={fontClass}>
-        <NextAuthProvider>
-          <ClientProvider>
-            <MantineProvider theme={theme}>
-              <Notifications />
-              {children}
-            </MantineProvider>
-          </ClientProvider>
-        </NextAuthProvider>
+        <ClientProvider>
+          <MantineProvider theme={theme}>
+            <Notifications />
+            {children}
+          </MantineProvider>
+        </ClientProvider>
       </body>
     </html>
   );

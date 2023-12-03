@@ -12,6 +12,7 @@ export async function GET(req: Request) {
 
     const take = url.searchParams.get('take');
     const lastCursor = url.searchParams.get('lastCursor');
+
     const data = await getPaginatedData<Types.User>(
       prisma.user.findMany,
       take as string,

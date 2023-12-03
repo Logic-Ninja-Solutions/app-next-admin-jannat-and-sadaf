@@ -3,9 +3,12 @@ import { InfiniteData, QueryClient } from '@tanstack/react-query';
 export async function getPaginatedData<T extends { id: string }>(
   fetch: Function,
   take: string,
-  lastCursor: string
+  lastCursor: string,
+
+  props: any = {}
 ) {
   const data: T[] = await fetch({
+    ...props,
     take: take ? Number(take) : 10,
     ...(lastCursor && {
       skip: 1,

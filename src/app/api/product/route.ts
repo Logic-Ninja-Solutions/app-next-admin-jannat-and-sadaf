@@ -31,11 +31,26 @@ export async function GET(req: Request) {
 }
 
 function generateSlug(title: string) {
-  const slug = slugify(title, {
+  return slugify(title, {
     lower: true,
   });
-  const random = Math.floor(Math.random() * 1000);
-  return `${slug}-${random}`;
+}
+
+function validateSlug(slug: string, productID?: string) {
+  const query = productID
+    ? {
+        id: {
+          not: productID,
+        },
+      }
+    : {};
+
+  return prisma.product.findMany({
+    where: {
+      slug,
+      ...query,
+    },
+  });
 }
 
 export async function PATCH(req: Request) {
@@ -45,6 +60,11 @@ export async function PATCH(req: Request) {
     if (!productID) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
 
     const slug = generateSlug(body.title);
+    const existingProduct = await validateSlug(slug, productID);
+    if (existingProduct.length > 0) {
+      return NextResponse.json({ error: 'Slug already exists' }, { status: 400 });
+    }
+
     const data = {
       ...body,
       slug,
@@ -72,6 +92,10 @@ export async function POST(req: Request) {
   try {
     const body: Types.Product = await req.json();
     const slug = generateSlug(body.title);
+    const existingProduct = await validateSlug(slug);
+    if (existingProduct.length > 0) {
+      return NextResponse.json({ error: 'Slug already exists' }, { status: 400 });
+    }
     const newProduct = await prisma.product.create({
       data: {
         ...body,

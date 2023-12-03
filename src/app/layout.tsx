@@ -10,7 +10,6 @@ import { Metadata } from 'next';
 import { Notifications } from '@mantine/notifications';
 import { theme } from '@/src/styles/theme';
 import ClientProvider from '../providers/Client';
-import NextAuthProvider from '../providers/Session';
 import { fontClass } from '../styles/font';
 
 export const metadata: Metadata = {

@@ -2,10 +2,12 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@src/styles/globals.scss';
 import '@mantine/tiptap/styles.css';
+import '@mantine/notifications/styles.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 
 import { Metadata } from 'next';
+import { Notifications } from '@mantine/notifications';
 import { theme } from '@/src/styles/theme';
 import ClientProvider from '../providers/Client';
 import NextAuthProvider from '../providers/Session';
@@ -25,7 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={fontClass}>
         <NextAuthProvider>
           <ClientProvider>
-            <MantineProvider theme={theme}>{children}</MantineProvider>
+            <MantineProvider theme={theme}>
+              <Notifications />
+              {children}
+            </MantineProvider>
           </ClientProvider>
         </NextAuthProvider>
       </body>

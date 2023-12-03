@@ -60,7 +60,7 @@ export default function PaginatedTable<T>({
         <>
           <Box mx="auto">
             <Table.ScrollContainer minWidth={500} type="native">
-              <Table withRowBorders highlightOnHover striped>
+              <Table withColumnBorders withRowBorders highlightOnHover striped>
                 <Table.Thead>
                   <Table.Tr>
                     {columns.map((column) => (

@@ -4,8 +4,6 @@ import {
   Card,
   Checkbox,
   Flex,
-  Grid,
-  Group,
   NumberInput,
   Stack,
   Text,
@@ -14,6 +12,9 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Link } from '@mantine/tiptap';
+import Types from '@src/types/prisma';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Highlight from '@tiptap/extension-highlight';
 import SubScript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -21,10 +22,10 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import axios from 'axios';
+import { notifications } from '@mantine/notifications';
+import { createInInfiniteQuery, updateInInfiniteQuery } from '@/src/utils/api/pagination';
 import TextEditor from '../../core/RichTextEditor';
-
-import classes from './styles.module.scss';
 
 interface ProductVariant {
   size: string;
@@ -38,9 +39,16 @@ interface ProductFormValues {
   description: string;
   images: string[];
   variants: ProductVariant[];
+  isAvailable: boolean;
+  code: string;
 }
 
-export default function ProductForm() {
+type ProductFormProps = {
+  editData?: Types.Product;
+  onSuccess: () => void;
+};
+
+export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   const theme = useMantineTheme();
   const initialContent = '';
   const editor = useEditor({
@@ -58,14 +66,68 @@ export default function ProductForm() {
 
   const form = useForm<ProductFormValues>({
     initialValues: {
-      title: '',
-      description: '',
-      variants: [],
-      images: [],
+      title: editData?.title || '',
+      code: editData?.code || '',
+      description: editData?.description || '',
+      variants: editData?.variants || [],
+      images: editData?.images || [],
+      isAvailable: editData?.isAvailable || false,
     },
   });
-  function onSubmit(values: ProductFormValues) {
-    console.log('here', values);
+
+  async function createProduct(values: ProductFormValues) {
+    const response = await axios.post('/api/product', values);
+    return response.data;
+  }
+
+  async function updateProduct(values: ProductFormValues) {
+    const response = await axios.patch('/api/product', {
+      ...values,
+      id: editData?.id,
+    });
+    return response.data;
+  }
+
+  const queryClient = useQueryClient();
+
+  const productCreateMutation = useMutation({
+    mutationKey: ['create-product'],
+    mutationFn: createProduct,
+    onSuccess(data: Types.Product) {
+      createInInfiniteQuery(queryClient, ['product'], data);
+      onSuccess();
+    },
+    onError() {
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
+      });
+    },
+  });
+
+  const productUpdateMutation = useMutation({
+    mutationKey: ['update-product'],
+    mutationFn: updateProduct,
+    onSuccess(data: Types.Product) {
+      updateInInfiniteQuery(queryClient, ['product'], data);
+      onSuccess();
+    },
+    onError() {
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
+      });
+    },
+  });
+
+  async function onSubmit(values: ProductFormValues) {
+    if (editData) {
+      await productUpdateMutation.mutateAsync(values);
+      return;
+    }
+    await productCreateMutation.mutateAsync(values);
   }
 
   form.values.description = editor?.getHTML() || '';
@@ -97,6 +159,7 @@ export default function ProductForm() {
               mt={5}
               style={{ cursor: 'pointer' }}
               label="Available"
+              checked={form.values.variants[index].isAvailable}
               {...form.getInputProps(`variants.${index}.isAvailable`)}
             />
           </Stack>
@@ -137,9 +200,9 @@ export default function ProductForm() {
   function addVariant() {
     form.insertListItem('variants', {
       size: '',
-      quantity: 0,
-      price: 0,
-      isAvailable: false,
+      quantity: null,
+      price: null,
+      isAvailable: true,
     });
   }
 
@@ -159,8 +222,23 @@ export default function ProductForm() {
               placeholder="Stylish Kurta"
               {...form.getInputProps('title')}
             />
+            <TextInput
+              mb={15}
+              withAsterisk
+              label="Code"
+              placeholder="Product Code (e.g. 1234)"
+              {...form.getInputProps('code')}
+            />
             <Text size="sm">Description:</Text>
             <TextEditor editor={editor} />
+
+            <Checkbox
+              mt={10}
+              style={{ cursor: 'pointer' }}
+              label="Available"
+              checked={form.values.isAvailable}
+              {...form.getInputProps('isAvailable')}
+            />
           </Card>
           <Card withBorder shadow="sm" radius="md">
             <Card.Section withBorder inheritPadding py="xs">
@@ -188,7 +266,11 @@ export default function ProductForm() {
             {imageFields}
           </Card>
 
-          <Button type="submit" variant="light">
+          <Button
+            loading={productCreateMutation.isPending || productUpdateMutation.isPending}
+            type="submit"
+            variant="light"
+          >
             Submit
           </Button>
         </Stack>

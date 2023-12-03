@@ -42,7 +42,7 @@ export default function InfiniteTable<T>({
   }
 
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: [queryKey],
+    queryKey,
     queryFn: fetchPaginatedData,
     initialPageParam: null,
     getNextPageParam: (lastPage) => lastPage.nextToken,

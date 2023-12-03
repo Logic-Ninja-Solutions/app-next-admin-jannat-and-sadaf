@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Box, Button, Table, Tabs } from '@mantine/core';
+import { ActionIcon, Box, Button, Center, Image, Table, Tabs } from '@mantine/core';
 import * as Types from '@prisma/client';
 import { IconCheck, IconCross, IconCubePlus, IconEdit, IconList } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -9,19 +9,30 @@ import ProductForm from '@/src/components/forms/product';
 import InfiniteTable from '@/src/components/InfiniteTable';
 
 export default function Product() {
-  const columns = ['Title', 'Available', 'Actions'];
+  const columns = ['Image', 'Title', 'Available', 'Actions'];
   const [editProduct, setEditProduct] = useState<Types.Product | undefined>(undefined);
 
   const [activeTab, setActiveTab] = useState<'list' | 'create' | 'update'>('list');
 
   function onEditClick(product: Types.Product) {
-    setEditProduct(product);
+    setEditProduct(undefined);
     setActiveTab('update');
+    setEditProduct(product);
   }
 
   function render(product: Types.Product) {
+    const image = product.images?.[0];
     return (
       <Table.Tr key={product.id}>
+        <Table.Td>
+          <Center>
+            <Image
+              src={image ?? ''}
+              w={50}
+              fallbackSrc="https://placehold.co/600x400?text=No+Image"
+            />
+          </Center>
+        </Table.Td>
         <Table.Td>{product.title}</Table.Td>
         <Table.Td>{product.isAvailable ? <IconCheck /> : <IconCross />}</Table.Td>
         <Table.Td>
@@ -64,6 +75,7 @@ export default function Product() {
         <Tabs.Panel value="create">
           <ProductForm
             onSuccess={() => {
+              setEditProduct(undefined);
               notifications.show({
                 title: 'Success',
                 message: 'Product created successfully',
@@ -78,6 +90,7 @@ export default function Product() {
             {editProduct && (
               <ProductForm
                 onSuccess={() => {
+                  setEditProduct(undefined);
                   notifications.show({
                     title: 'Success',
                     message: 'Product updated successfully',

@@ -24,6 +24,7 @@ import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
+import { useEffect } from 'react';
 import { createInInfiniteQuery, updateInInfiniteQuery } from '@/src/utils/api/pagination';
 import TextEditor from '../../core/RichTextEditor';
 
@@ -75,6 +76,19 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
     },
   });
 
+  useEffect(() => {
+    if (editData) {
+      form.setValues({
+        title: editData.title,
+        code: editData.code,
+        description: editData.description,
+        variants: editData.variants,
+        images: editData.images,
+        isAvailable: editData.isAvailable,
+      });
+    }
+  }, [editData]);
+
   async function createProduct(values: ProductFormValues) {
     const response = await axios.post('/api/product', values);
     return response.data;
@@ -95,6 +109,7 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
     mutationFn: createProduct,
     onSuccess(data: Types.Product) {
       createInInfiniteQuery(queryClient, ['product'], data);
+      form.reset();
       onSuccess();
     },
     onError() {
@@ -111,6 +126,7 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
     mutationFn: updateProduct,
     onSuccess(data: Types.Product) {
       updateInInfiniteQuery(queryClient, ['product'], data);
+      form.reset();
       onSuccess();
     },
     onError() {

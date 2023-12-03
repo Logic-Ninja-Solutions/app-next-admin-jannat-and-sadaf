@@ -6,8 +6,8 @@ import * as React from 'react';
 import cx from 'clsx';
 import classes from './Logo.module.scss';
 
-const logoWhite = 'logo-cropped-white-no-bg.png';
-const logoBlack = 'logo-cropped-no-bg.png';
+const logoWhite = '/logo-cropped-white-no-bg.png';
+const logoBlack = '/logo-cropped-no-bg.png';
 
 export function Logo() {
   return (

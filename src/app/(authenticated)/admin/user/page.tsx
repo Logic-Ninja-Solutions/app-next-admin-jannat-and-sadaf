@@ -68,7 +68,7 @@ export default function User() {
 
         <Tabs.Panel value="list">
           <InfiniteTable
-            fetchApi="api/user"
+            fetchApi="/api/user"
             queryKey={['user']}
             columns={columns}
             render={render}

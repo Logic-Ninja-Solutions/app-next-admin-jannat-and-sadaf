@@ -22,6 +22,9 @@ export default function Home() {
     if (isSuccess && authData) {
       redirect('/admin');
     }
+    if (isSuccess && !authData) {
+      redirect('/login');
+    }
   }, [isSuccess, authData]);
 
   if (isLoading) {

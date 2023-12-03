@@ -65,7 +65,7 @@ export default function Product() {
 
         <Tabs.Panel value="list">
           <InfiniteTable
-            fetchApi="api/product"
+            fetchApi="/api/product"
             queryKey={['product']}
             columns={columns}
             render={render}

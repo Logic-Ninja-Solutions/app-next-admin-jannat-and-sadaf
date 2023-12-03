@@ -80,6 +80,7 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
 
   useEffect(() => {
     if (editData) {
+      editor?.commands.setContent(editData.description);
       form.setValues({
         title: editData.title,
         code: editData.code,
@@ -89,7 +90,7 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
         isAvailable: editData.isAvailable,
       });
     }
-  }, [editData]);
+  }, [editData, editor]);
 
   async function createProduct(values: ProductFormValues) {
     const response = await axios.post('/api/product', values);

@@ -108,3 +108,27 @@ export function createInInfiniteQuery<T extends { id: string }>(
     }
   );
 }
+
+export function deleteInInfinteQuery<T extends { id: string }>(
+  queryClient: QueryClient,
+  keys: string[],
+  id: string
+) {
+  queryClient.setQueryData(
+    keys,
+    (oldData: InfiniteData<{ items: T[]; nextToken: string }, unknown> | undefined) => {
+      if (oldData) {
+        const updatedPage = oldData.pages.map((page) => ({
+          ...page,
+          items: page.items.filter((item) => item.id !== id),
+        }));
+
+        return {
+          ...oldData,
+          pages: updatedPage,
+        };
+      }
+      return oldData;
+    }
+  );
+}

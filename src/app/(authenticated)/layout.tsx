@@ -1,8 +1,6 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { redirect } from 'next/navigation';
-import { useEffect } from 'react';
 import { isAuthenticated } from '@/src/actions/auth';
 import { AuthAction } from '@/src/actions/auth/enum';
 import LoadingAuth from '@/src/components/core/LoadingAuth';

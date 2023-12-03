@@ -1,12 +1,24 @@
 'use client';
 
-import { ActionIcon, Box, Button, Center, Image, Table, Tabs } from '@mantine/core';
+import { ActionIcon, Box, Button, Center, Flex, Image, Table, Tabs } from '@mantine/core';
 import * as Types from '@prisma/client';
-import { IconCheck, IconCross, IconCubePlus, IconEdit, IconList } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconCross,
+  IconCubePlus,
+  IconEdit,
+  IconList,
+  IconTrash,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import ProductForm from '@/src/components/forms/product';
 import InfiniteTable from '@/src/components/InfiniteTable';
+import { deleteProduct } from '@/src/actions/product';
+import { ProductActionType } from '@/src/actions/product/enums';
+import { deleteInInfinteQuery } from '@/src/utils/api/pagination';
 
 export default function Product() {
   const columns = ['Image', 'Title', 'Available', 'Actions'];
@@ -18,6 +30,28 @@ export default function Product() {
     setEditProduct(undefined);
     setActiveTab('update');
     setEditProduct(product);
+  }
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationKey: [ProductActionType.deleteProduct],
+    mutationFn: deleteProduct,
+    onSuccess: (data) => {
+      if (data) {
+        deleteInInfinteQuery(queryClient, [ProductActionType.fetchProducts], data?.id ?? '');
+        notifications.show({
+          title: 'Success',
+          message: 'Product deleted successfully',
+        });
+      }
+    },
+  });
+
+  async function onDeleteClick(product: Types.Product) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      await deleteMutation.mutateAsync(product.id);
+    }
   }
 
   function render(product: Types.Product) {
@@ -36,13 +70,24 @@ export default function Product() {
         <Table.Td>{product.title}</Table.Td>
         <Table.Td>{product.isAvailable ? <IconCheck /> : <IconCross />}</Table.Td>
         <Table.Td>
-          <ActionIcon
-            onClick={() => {
-              onEditClick(product);
-            }}
-          >
-            <IconEdit />
-          </ActionIcon>
+          <Flex gap="md">
+            <ActionIcon
+              onClick={() => {
+                onEditClick(product);
+              }}
+            >
+              <IconEdit />
+            </ActionIcon>
+
+            <ActionIcon
+              color="red"
+              onClick={() => {
+                onDeleteClick(product);
+              }}
+            >
+              <IconTrash />
+            </ActionIcon>
+          </Flex>
         </Table.Td>
       </Table.Tr>
     );
@@ -66,7 +111,7 @@ export default function Product() {
         <Tabs.Panel value="list">
           <InfiniteTable
             fetchApi="/api/product"
-            queryKey={['product']}
+            queryKey={[ProductActionType.fetchProducts]}
             columns={columns}
             render={render}
           />

@@ -27,6 +27,7 @@ import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { createInInfiniteQuery, updateInInfiniteQuery } from '@/src/utils/api/pagination';
 import TextEditor from '../../core/RichTextEditor';
+import { ProductActionType } from '@/src/actions/product/enums';
 
 interface ProductVariant {
   size: string;
@@ -105,10 +106,10 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   const queryClient = useQueryClient();
 
   const productCreateMutation = useMutation({
-    mutationKey: ['create-product'],
+    mutationKey: [ProductActionType.createProduct],
     mutationFn: createProduct,
     onSuccess(data: Types.Product) {
-      createInInfiniteQuery(queryClient, ['product'], data);
+      createInInfiniteQuery(queryClient, [ProductActionType.fetchProducts], data);
       form.reset();
       onSuccess();
     },
@@ -122,10 +123,10 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   });
 
   const productUpdateMutation = useMutation({
-    mutationKey: ['update-product'],
+    mutationKey: [ProductActionType.updateProduct],
     mutationFn: updateProduct,
     onSuccess(data: Types.Product) {
-      updateInInfiniteQuery(queryClient, ['product'], data);
+      updateInInfiniteQuery(queryClient, [ProductActionType.fetchProducts], data);
       form.reset();
       onSuccess();
     },

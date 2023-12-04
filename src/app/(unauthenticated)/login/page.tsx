@@ -63,13 +63,13 @@ export default function SignIn() {
 
             <LoginButton />
 
-            <Text className={classes.signupText} ta="center">
+            {/* <Text className={classes.signupText} ta="center">
               Don&apos;t have an account?
               <Text className={classes.signupLink} component={Link} href="signup">
                 {' '}
-                Sign up
+
               </Text>
-            </Text>
+            </Text> */}
           </Stack>
         </form>
       </Card>

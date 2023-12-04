@@ -11,7 +11,7 @@ type User = Types.User;
 async function getUser(email: string): Promise<User | undefined> {
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email, isStaff: true },
     });
     if (user) return user;
 

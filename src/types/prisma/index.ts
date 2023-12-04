@@ -7,4 +7,11 @@ export type UserWithAddresses = Prisma.UserGetPayload<{
   };
 }>;
 
+export type OrderWithUser = Prisma.OrderGetPayload<{
+  include: {
+    User: true;
+    address: true;
+  };
+}>;
+
 export default Types;

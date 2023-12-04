@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, TextInput, createTheme } from '@mantine/core';
+import { Button, Chip, Input, TextInput, createTheme } from '@mantine/core';
 import { fontStyle } from './font';
 import classes from './theme.module.scss';
 
@@ -20,6 +20,13 @@ export const theme = createTheme({
   components: {
     Button: Button.extend({
       defaultProps: {
+        radius: 'md',
+        variant: 'filled',
+      },
+    }),
+    Chip: Chip.extend({
+      defaultProps: {
+        checked: false,
         radius: 'md',
         variant: 'filled',
       },

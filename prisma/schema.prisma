@@ -39,6 +39,17 @@ type ProductVariant {
     isAvailable Boolean
 }
 
+model Category {
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    title       String
+    slug        String    @unique
+    isAvailable Boolean
+    products    Product[]
+    image       String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
 model Product {
     id          String           @id @default(auto()) @map("_id") @db.ObjectId
     title       String
@@ -49,10 +60,12 @@ model Product {
     images      String[]
     variants    ProductVariant[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    User      User?    @relation(fields: [userId], references: [id])
-    userId    String?  @db.ObjectId
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    User       User?     @relation(fields: [userId], references: [id])
+    userId     String?   @db.ObjectId
+    Category   Category? @relation(fields: [categoryId], references: [id])
+    categoryId String?   @db.ObjectId
 }
 
 model Address {

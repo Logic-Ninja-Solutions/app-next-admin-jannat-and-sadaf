@@ -13,6 +13,8 @@ import {
 } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
 import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { authenticate } from '@/src/actions/auth';
 import classes from './Signin.module.scss';
 
@@ -32,7 +34,15 @@ function LoginButton() {
 }
 
 export default function SignIn() {
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  const [errorState, dispatch] = useFormState(authenticate, '');
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (errorState == null) {
+      router.replace('/admin');
+    }
+  }, [errorState]);
 
   return (
     <Center h="100%">
@@ -55,9 +65,9 @@ export default function SignIn() {
             />
             <PasswordInput placeholder="Your password" name="password" />
 
-            {errorMessage && (
+            {errorState && (
               <Text c="red" ta="center">
-                {errorMessage}
+                {errorState}
               </Text>
             )}
 

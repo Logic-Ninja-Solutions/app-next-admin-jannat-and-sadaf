@@ -3,49 +3,58 @@
 import { ActionIcon, Avatar, Card, Group, Text, rem } from '@mantine/core';
 
 import { IconLogout } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { AuthAction } from '@/src/actions/auth/enum';
 import {
     getUserData,
-    isAuthenticated,
     unauthenticate,
 } from '@/src/actions/auth';
-import { AuthAction } from '@/src/actions/auth/enum';
+import { GetAuth } from '../../../api/user';
 import classes from './UserButton.module.scss';
 
 export function UserButton() {
-    const { data: authData, isSuccess } = useQuery({
-        queryKey: [AuthAction.auth],
-        queryFn: () => isAuthenticated(),
-    });
+  const { data: authData, isSuccess } = GetAuth();
 
-    const { data: userData } = useQuery({
-        queryKey: [AuthAction.userData],
-        queryFn: () => getUserData(authData?.user?.email),
-        enabled: !!authData && isSuccess,
-    });
+  const client = useQueryClient();
+  const router = useRouter();
 
-    return (
-        <Card className={classes.user}>
-            <Group>
-                <Avatar radius="xl" />
+  const { data: user } = useQuery({
+    queryKey: [AuthAction.userData],
+    queryFn: () => getUserData(authData?.user?.email),
+    enabled: !!authData && isSuccess,
+  });
 
-                <div style={{ flex: 1 }}>
-                    <Text size="sm" fw={500}>
-                        {`${userData?.firstName} ${userData?.lastName}`}
-                    </Text>
+  const userData = user?.user;
 
-                    <Text c="dimmed" size="xs">
-                        {userData?.email}
-                    </Text>
-                </div>
+  return (
+    <Card className={classes.user}>
+      <Group>
+        <Avatar radius="xl" />
 
-                <ActionIcon onClick={async () => unauthenticate()}>
-                    <IconLogout
-                      style={{ width: rem(14), height: rem(14) }}
-                      stroke={1.5}
-                    />
-                </ActionIcon>
-            </Group>
-        </Card>
-    );
+        <div style={{ flex: 1 }}>
+          <Text size="sm" fw={500}>
+            {`${userData?.firstName} ${userData?.lastName}`}
+          </Text>
+
+          <Text c="dimmed" size="xs">
+            {userData?.email}
+          </Text>
+        </div>
+
+        <ActionIcon
+          onClick={async () => {
+            await unauthenticate();
+            router.replace('/');
+            client.invalidateQueries();
+          }}
+        >
+          <IconLogout
+            style={{ width: rem(14), height: rem(14) }}
+            stroke={1.5}
+          />
+        </ActionIcon>
+      </Group>
+    </Card>
+  );
 }

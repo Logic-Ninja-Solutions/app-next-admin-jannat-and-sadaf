@@ -1,26 +1,40 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { isAuthenticated } from '@/src/actions/auth';
-import { AuthAction } from '@/src/actions/auth/enum';
-import LoadingAuth from '@/src/components/core/LoadingAuth';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import DefaultLayout from '@/src/components/layouts/DefaultLayout';
+import { GetAuth } from '../../api/user';
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoading } = useQuery({
-    queryKey: [AuthAction.auth],
-    queryFn: () => isAuthenticated(),
-  });
+  const { data, isLoading, isError, isSuccess } = GetAuth();
 
-  if (isLoading) {
-    return <LoadingAuth text="Authenticating" />;
-  }
+  const router = useRouter();
 
-  return <DefaultLayout>{children}</DefaultLayout>;
+  useEffect(() => {
+    if (isSuccess) return;
+    if (isLoading) return;
+
+    if (isError) {
+      router.replace('/login');
+    }
+    if (!data?.user) return;
+
+    if (!data.user?.isStaff) {
+      router.replace('/login');
+    }
+  }, [isLoading, isError, data]);
+
+  return (
+    <>
+
+      <DefaultLayout>{children}</DefaultLayout>
+
+    </>
+  );
 }
 
 RootLayout.requireAuth = true;

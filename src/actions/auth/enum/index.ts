@@ -1,6 +1,6 @@
 export enum AuthAction {
-  login = 'login',
-  logout = 'logout',
-  auth = 'auth',
-  userData = 'userData',
+    login = 'login',
+    logout = 'logout',
+    auth = 'auth',
+    userData = 'userData',
 }

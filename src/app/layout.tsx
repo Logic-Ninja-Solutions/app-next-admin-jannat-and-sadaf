@@ -13,24 +13,28 @@ import ClientProvider from '../providers/Client';
 import { fontClass } from '../styles/font';
 
 export const metadata: Metadata = {
-  title: 'Jannt and Sadaf Admin Panel',
-  description: 'Admin panel for Jannt and Sadaf',
+    title: 'Jannt and Sadaf Admin Panel',
+    description: 'Admin panel for Jannt and Sadaf',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
-      <body className={fontClass}>
-        <ClientProvider>
-          <MantineProvider theme={theme}>
-            <Notifications />
-            {children}
-          </MantineProvider>
-        </ClientProvider>
-      </body>
-    </html>
-  );
+export default function RootLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <html lang="en">
+            <head>
+                <ColorSchemeScript />
+            </head>
+            <body className={fontClass}>
+                <ClientProvider>
+                    <MantineProvider theme={theme}>
+                        <Notifications />
+                        {children}
+                    </MantineProvider>
+                </ClientProvider>
+            </body>
+        </html>
+    );
 }

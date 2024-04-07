@@ -11,16 +11,12 @@ import {
   Title,
   rem,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { IconAt } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
-import { signIn } from 'next-auth/react';
-import Link from 'next/link';
 import { useFormState, useFormStatus } from 'react-dom';
-import classes from './Signin.module.scss';
 import { authenticate } from '@/src/actions/auth';
+import classes from './Signin.module.scss';
 
-interface SignInForm {
+export interface SignInForm {
   email: string;
   password: string;
 }
@@ -46,11 +42,15 @@ export default function SignIn() {
             <Title ta="center" className={classes.title}>
               Sign In
             </Title>
-            <Text className={classes.subtitle}>Enter your email and password to sign in:</Text>
+            <Text className={classes.subtitle}>
+              Enter your email and password to sign in:
+            </Text>
 
             <TextInput
               name="email"
-              leftSection={<IconAt style={{ width: rem(16), height: rem(16) }} />}
+              leftSection={
+                <IconAt style={{ width: rem(16), height: rem(16) }} />
+              }
               placeholder="Your email"
             />
             <PasswordInput placeholder="Your password" name="password" />

@@ -3,13 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx prisma generate dev --name init && next dev",
+    "dev": "next dev",
     "start": "next start",
-    "build": "prisma generate && next build",
-    "migrate:dev": "prisma generate dev --name init",
+    "build": "next build",
     "lint": "next lint",
-    "vercel-build": "next lint && prisma generate && next build",
-    "postinstall": "prisma generate"
+    "vercel-build": "next lint && next build"
   },
   "dependencies": {
     "@mantine/core": "^7.2.2",
@@ -18,7 +16,6 @@
     "@mantine/hooks": "^7.2.2",
     "@mantine/notifications": "^7.2.2",
     "@mantine/tiptap": "^7.2.2",
-    "@prisma/client": "^5.6.0",
     "@tabler/icons-react": "^2.42.0",
     "@tanstack/react-query": "^5.12.2",
     "@tiptap/extension-highlight": "^2.1.13",
@@ -42,6 +39,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.1.4",
     "@next/eslint-plugin-next": "^14.0.3",
     "@tanstack/eslint-plugin-query": "^5.8.4",
     "@types/bcryptjs": "^2",
@@ -60,7 +58,6 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss-preset-mantine": "^1.11.0",
-    "prisma": "^5.5.2",
     "sass": "^1.69.5",
     "typescript": "^5"
   }

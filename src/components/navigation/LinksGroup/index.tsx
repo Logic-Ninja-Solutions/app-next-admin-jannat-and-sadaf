@@ -7,75 +7,84 @@ import classes from './LinksGroup.module.scss';
 import linkStyles from './link.module.scss';
 
 export interface LinkGroup {
-  icon: React.FC<any>;
-  link: string;
-  iconColor?: string;
-  label: string;
-
-  subLinks?: {
+    icon: React.FC<any>;
     link: string;
+    iconColor?: string;
     label: string;
-  }[];
+
+    subLinks?: {
+        link: string;
+        label: string;
+    }[];
 }
 
 interface Props {
-  links: LinkGroup[];
+    links: LinkGroup[];
 }
 
 export function LinksGroup({ links }: Props) {
-  const [active, setActive] = useState<undefined | number>(undefined);
-  const [activeSub, setActiveSub] = useState<number | undefined>(undefined);
+    const [active, setActive] = useState<undefined | number>(undefined);
+    const [activeSub, setActiveSub] = useState<number | undefined>(undefined);
 
-  const pathname = usePathname();
+    const pathname = usePathname();
 
-  return (
-    <>
-      {links.map((link, index) => {
-        const isActive = pathname === link.link || active === index;
-        return (
-          <Box key={index}>
-            <NavLink
-              childrenOffset={30}
-              className={clsx(isActive && classes.activeLink)}
-              defaultOpened
-              active={isActive}
-              onClick={() => {
-                if (!link?.subLinks?.length) {
-                  setActive(index);
-                  setActiveSub(undefined);
-                }
-              }}
-              leftSection={<link.icon />}
-              label={link.label}
-              component={Link}
-              href={link.subLinks ? '#' : link.link}
-              classNames={linkStyles}
-            >
-              {link.subLinks?.map((item, subIndex) => {
-                const isSubActive = pathname === item.link || activeSub === subIndex;
-
+    return (
+        <>
+            {links.map((link, index) => {
+                const isActive = pathname === link.link || active === index;
                 return (
-                  <Box key={subIndex} pl="md" className={classes.subLinkContainer}>
-                    <NavLink
-                      active={isSubActive}
-                      onClick={() => {
-                        setActiveSub(subIndex);
-                        setActive(undefined);
-                      }}
-                      className={clsx(isSubActive && classes.activeLink)}
-                      component={Link}
-                      href={item.link}
-                      label={item.label}
-                      classNames={linkStyles}
-                    />
-                  </Box>
+                    <Box key={index}>
+                        <NavLink
+                          childrenOffset={30}
+                          className={clsx(isActive && classes.activeLink)}
+                          defaultOpened
+                          active={isActive}
+                          onClick={() => {
+                                if (!link?.subLinks?.length) {
+                                    setActive(index);
+                                    setActiveSub(undefined);
+                                }
+                            }}
+                          leftSection={<link.icon />}
+                          label={link.label}
+                          component={Link}
+                          href={link.subLinks ? '#' : link.link}
+                          classNames={linkStyles}
+                        >
+                            {link.subLinks?.map((item, subIndex) => {
+                                const isSubActive =
+                                    pathname === item.link ||
+                                    activeSub === subIndex;
+
+                                return (
+                                    <Box
+                                      key={subIndex}
+                                      pl="md"
+                                      className={classes.subLinkContainer}
+                                    >
+                                        <NavLink
+                                          active={isSubActive}
+                                          onClick={() => {
+                                                setActiveSub(subIndex);
+                                                setActive(undefined);
+                                            }}
+                                          className={clsx(
+                                                isSubActive &&
+                                                    classes.activeLink,
+                                            )}
+                                          component={Link}
+                                          href={item.link}
+                                          label={item.label}
+                                          classNames={linkStyles}
+                                        />
+                                    </Box>
+                                );
+                            })}
+                        </NavLink>
+                        <Divider />
+                    </Box>
                 );
-              })}
-            </NavLink>
-            <Divider />
-          </Box>
-        );
-      })}
-    </>
-  );
+            })}
+        </>
+    );
 }

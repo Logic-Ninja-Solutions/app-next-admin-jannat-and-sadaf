@@ -1,23 +1,21 @@
 import {
-  Box,
   Button,
   Card,
   Checkbox,
-  Flex,
   PasswordInput,
   Stack,
-  Text,
   TextInput,
-  useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect } from 'react';
-import Types, { UserWithAddresses } from '@/src/types/prisma';
-import { createInInfiniteQuery, updateInInfiniteQuery } from '@/src/utils/api/pagination';
+import {
+  createInInfiniteQuery,
+  updateInInfiniteQuery,
+} from '@/src/utils/api/pagination';
+import serverInstance from '../../../actions/api';
+import { User } from '../../../types/user';
 
 interface UserFormValues {
   email: string;
@@ -32,12 +30,13 @@ interface UserFormValues {
 
 type UserFormProps = {
   onSuccess: () => void;
-  editData?: Types.User;
+  editData?: User;
 };
 
-export default function UserForm({ editData: editUser, onSuccess }: UserFormProps) {
-  const theme = useMantineTheme();
-
+export default function UserForm({
+  editData: editUser,
+  onSuccess,
+}: UserFormProps) {
   const form = useForm<UserFormValues>({
     initialValues: {
       email: '',
@@ -53,7 +52,7 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
 
   async function createUser(values: UserFormValues) {
     try {
-      const response = await axios.post('/api/user', values);
+      const response = await serverInstance.post('user', values);
       return response.data;
     } catch (error) {
       throw new Error('Failed to create user');
@@ -61,9 +60,8 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
   }
   async function updateUser(values: UserFormValues) {
     try {
-      const response = await axios.patch('/api/user', {
+      const response = await serverInstance.patch(`user/${editUser?.id}`, {
         ...values,
-        id: editUser?.id,
         password: undefined,
       });
       return response.data;
@@ -77,15 +75,15 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
   const userCreateMutation = useMutation({
     mutationKey: ['create-user'],
     mutationFn: createUser,
-    onSuccess(data: Types.User) {
+    onSuccess(data: User) {
       createInInfiniteQuery(queryClient, ['user'], data);
       form.reset();
       onSuccess();
     },
-    onError() {
+    onError(e) {
       notifications.show({
         title: 'Error',
-        message: 'Something went wrong',
+        message: e?.message || 'Something went wrong',
         color: 'red',
       });
     },
@@ -94,15 +92,15 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
   const userUpdateMutation = useMutation({
     mutationKey: ['update-user'],
     mutationFn: updateUser,
-    onSuccess(data: Types.User) {
+    onSuccess(data: User) {
       updateInInfiniteQuery(queryClient, ['user'], data);
       form.reset();
       onSuccess();
     },
-    onError() {
+    onError(e) {
       notifications.show({
         title: 'Error',
-        message: 'Something went wrong',
+        message: e?.message || 'Something went wrong',
         color: 'red',
       });
     },
@@ -131,17 +129,17 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
     }
   }, [editUser]);
 
-  function addAddress() {
-    form.insertListItem('addresses', {
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      firstName: '',
-      lastName: '',
-      contactNumber: '',
-      zipCode: '',
-    });
-  }
+  //   function addAddress() {
+  //     form.insertListItem("addresses", {
+  //       addressLine1: "",
+  //       addressLine2: "",
+  //       city: "",
+  //       firstName: "",
+  //       lastName: "",
+  //       contactNumber: "",
+  //       zipCode: "",
+  //     });
+  //   }
 
   return (
     <>
@@ -161,7 +159,9 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
               disabled={editUser !== undefined}
               type="password"
               label="Password"
-              placeholder={editUser ? 'Cannot change password' : 'Password for new user'}
+              placeholder={
+                editUser ? 'Cannot change password' : 'Password for new user'
+              }
               {...form.getInputProps('password')}
             />
             <TextInput
@@ -211,7 +211,9 @@ export default function UserForm({ editData: editUser, onSuccess }: UserFormProp
           </Card>
 
           <Button
-            loading={userCreateMutation.isPending || userUpdateMutation.isPending}
+            loading={
+              userCreateMutation.isPending || userUpdateMutation.isPending
+            }
             type="submit"
             variant="light"
           >

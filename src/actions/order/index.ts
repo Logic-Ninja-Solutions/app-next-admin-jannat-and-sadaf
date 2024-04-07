@@ -1,25 +1,19 @@
 'use server';
 
-import { prisma } from '@/server';
+import serverInstance from '../api';
 import { OrderStatus } from './enums';
+import { Order } from '../../types/order';
 
 // --------
 
-export async function getOrder(orderID: string) {
-  const order = await prisma.order.findUnique({
-    where: { id: orderID },
-    include: {
-      address: true,
-      User: true,
-    },
-  });
-  return order;
+export async function getOrder(orderID?: string) {
+  const response = await serverInstance.get<Order>(`order/${orderID}`);
+  return response.data;
 }
 
 export async function updateStatus(id: string, status: OrderStatus) {
-  const order = await prisma.order.update({
-    where: { id },
-    data: { status },
+  const response = await serverInstance.patch<Order>(`order/${id}`, {
+    status,
   });
-  return order;
+  return response.data;
 }

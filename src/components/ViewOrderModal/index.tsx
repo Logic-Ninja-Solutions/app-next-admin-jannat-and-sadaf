@@ -6,34 +6,38 @@ import {
   Divider,
   Flex,
   Group,
+  Image,
   Loader,
   Modal,
   Stack,
   Text,
-  Image,
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import Types from '@/src/types/prisma';
-import { OrderActionType } from '@/src/actions/order/enums';
 import { getOrder } from '@/src/actions/order';
+import { OrderActionType } from '@/src/actions/order/enums';
 import { domain } from '@/src/constants';
+import { Order } from '../../types/order';
 
 interface ViweOrderInfoProps {
   opened: boolean;
   onClose: () => void;
 
-  order?: Types.Order;
+  order?: Order;
 }
 
-export default function ViewOrderInfoModal({ opened, onClose, order }: ViweOrderInfoProps) {
+export default function ViewOrderInfoModal({
+  opened,
+  onClose,
+  order,
+}: ViweOrderInfoProps) {
   const { data, isLoading } = useQuery({
     queryKey: [OrderActionType.getOrder, order?.id],
-    queryFn: () => getOrder(order?.id!),
+    queryFn: () => getOrder(order?.id),
     enabled: !!order?.id,
   });
 
-  const user = data?.User;
+  const user = data?.user;
   const address = data?.address;
   const items = data?.items;
 
@@ -118,11 +122,16 @@ export default function ViewOrderInfoModal({ opened, onClose, order }: ViweOrder
               </Card.Section>
 
               <Divider my={10} />
-              {items?.map((item) => (
-                <Box>
+              {items?.map((item, idx) => (
+                <Box key={idx}>
                   <Flex gap={20} p="md">
                     <Box pos="relative">
-                      <Image w={64} h={80} src={item.image} alt="Product Image" />
+                      <Image
+                        w={64}
+                        h={80}
+                        src={item.image}
+                        alt="Product Image"
+                      />
                       <Chip
                         pos="absolute"
                         style={{
@@ -140,7 +149,10 @@ export default function ViewOrderInfoModal({ opened, onClose, order }: ViweOrder
                     <Stack gap={1}>
                       <span>{item.title}</span>
                       <span>{item.variant.size}</span>
-                      <Link target="_blank" href={`${domain}/product/${item.slug}`}>
+                      <Link
+                        target="_blank"
+                        href={`${domain}/product/${item.slug}`}
+                      >
                         View Product
                       </Link>
                     </Stack>

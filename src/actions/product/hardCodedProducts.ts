@@ -1,6 +1,3 @@
-import { Prisma } from '@prisma/client';
-import { prisma } from '@/server';
-
 const hardCodedDescription =
   '<p>This Nimr is crafted from jamawar and embroidered using age-old craftsmanship, combining resham, and zardozi work. Paired with a crafted izaar, and a contrasting gossamer organza dupatta, as shown here: </br></br> </p><ul><li>Crimson jamawar</li><li>Rose bud organza</li><li>Dry clean only</li></ul></br> <p>Lead time: 10 to 12 weeks from the time of purchase. A measurement form will be sent upon order.</p>';
 const imageSet1 = [
@@ -21,7 +18,7 @@ const imageSet3 = [
   'https://www.mishalakhani.com/cdn/shop/files/4-D_b55fe397-446a-4f5c-94f2-e24b9084570f.jpg?v=1701156656&width=1400',
 ];
 
-type ProdudctCreatePayload = Prisma.Args<typeof prisma.product, 'create'>['data'];
+type ProdudctCreatePayload = any;
 
 export const hardCodedProducts: ProdudctCreatePayload[] = [
   {

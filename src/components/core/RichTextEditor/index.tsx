@@ -5,8 +5,6 @@ type TextEditorPropsType = {
   editor: Editor | null;
 };
 
-const content = '';
-
 export default function TextEditor({ editor }: TextEditorPropsType) {
   return (
     <RichTextEditor editor={editor}>

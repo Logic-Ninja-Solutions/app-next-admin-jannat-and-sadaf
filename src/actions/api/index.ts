@@ -7,7 +7,7 @@ const baseUrl = 'http://localhost:3000/api';
 
 const serverInstance = axios.create({
     baseURL: baseUrl,
-    withCredentials: true,
+    // withCredentials: true,
 });
 
 serverInstance.interceptors.request.use(async (config) => {

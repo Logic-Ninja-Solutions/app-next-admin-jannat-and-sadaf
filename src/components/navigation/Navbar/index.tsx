@@ -14,7 +14,7 @@ const menu: LinkGroup[] = [
     { label: 'User', link: '/admin/user', icon: IconUser },
     { label: 'Product', link: '/admin/product', icon: IconClothesRack },
     { label: 'Order', link: '/admin/order', icon: IconManualGearbox },
-    { label: 'Categories', link: '/admin/categories', icon: IconCactus },
+    { label: 'Collection', link: '/admin/collections', icon: IconCactus },
 ];
 
 export function Navbar() {

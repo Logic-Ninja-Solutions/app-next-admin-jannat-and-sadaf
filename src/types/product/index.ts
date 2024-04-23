@@ -17,5 +17,5 @@ export interface Product {
     createdAt: Date;
     updatedAt: Date;
     userId?: string | null;
-    categoryId?: string | null;
+    collectionId?: string | null;
 }

@@ -8,25 +8,25 @@ import {
     updateInInfiniteQuery,
 } from '@/src/utils/api/pagination';
 import serverInstance from '../../../actions/api';
-import { CategoryActionType } from '../../../actions/category/enums';
-import { Category } from '../../../types/category';
+import { CollectionActionType } from '../../../actions/collection/enums';
+import { Collection } from '../../../types/collection';
 
-interface CategoryFormValues {
+interface CollectionFormValues {
     title: string;
     image: string;
     isAvailable: boolean;
 }
 
-type CategoryFormProps = {
+type FormProps = {
     onSuccess: () => void;
-    editData?: Category;
+    editData?: Collection;
 };
 
-export default function CategoryForm({
-    editData: editCategory,
+export default function CollectionForm({
+    editData,
     onSuccess,
-}: CategoryFormProps) {
-    const form = useForm<CategoryFormValues>({
+}: FormProps) {
+    const form = useForm<CollectionFormValues>({
         initialValues: {
             title: '',
             image: '',
@@ -34,35 +34,35 @@ export default function CategoryForm({
         },
     });
 
-    async function createCategory(values: CategoryFormValues) {
+    async function createCollection(values: CollectionFormValues) {
         try {
-            const response = await serverInstance.post('category', values);
+            const response = await serverInstance.post('collection', values);
             return response.data;
         } catch (error) {
-            throw new Error('Failed to create category');
+            throw new Error('Failed to create collection');
         }
     }
-    async function updateCategory(values: CategoryFormValues) {
+    async function updateCollection(values: CollectionFormValues) {
         try {
             const response = await serverInstance.patch(
-                `category/${editCategory?.id}`,
+                `collection/${editData?.id}`,
                 values,
             );
             return response.data;
         } catch (error) {
-            throw new Error('Failed to update category');
+            throw new Error('Failed to update collection');
         }
     }
 
     const queryClient = useQueryClient();
 
-    const categoryCreateMutation = useMutation({
-        mutationKey: ['create-category'],
-        mutationFn: createCategory,
-        onSuccess(data: Category) {
+    const createMutation = useMutation({
+        mutationKey: ['create-collection'],
+        mutationFn: createCollection,
+        onSuccess(data: Collection) {
             createInInfiniteQuery(
                 queryClient,
-                [CategoryActionType.fetchCategorys],
+                [CollectionActionType.fetchCollections],
                 data,
             );
             form.reset();
@@ -77,13 +77,13 @@ export default function CategoryForm({
         },
     });
 
-    const categoryUpdateMutation = useMutation({
-        mutationKey: ['update-category'],
-        mutationFn: updateCategory,
-        onSuccess(data: Category) {
+    const updateMutation = useMutation({
+        mutationKey: ['update-collection'],
+        mutationFn: updateCollection,
+        onSuccess(data: Collection) {
             updateInInfiniteQuery(
                 queryClient,
-                [CategoryActionType.fetchCategorys],
+                [CollectionActionType.fetchCollections],
                 data,
             );
             form.reset();
@@ -98,22 +98,22 @@ export default function CategoryForm({
         },
     });
 
-    async function onSubmit(values: CategoryFormValues) {
-        if (editCategory) {
-            await categoryUpdateMutation.mutateAsync(values);
+    async function onSubmit(values: CollectionFormValues) {
+        if (editData) {
+            await updateMutation.mutateAsync(values);
         } else {
-            await categoryCreateMutation.mutateAsync(values);
+            await createMutation.mutateAsync(values);
         }
     }
 
     useEffect(() => {
-        if (editCategory) {
+        if (editData) {
             form.setValues({
-                title: editCategory.title,
-                image: editCategory.image,
+                title: editData.title,
+                image: editData.image,
             });
         }
-    }, [editCategory]);
+    }, [editData]);
 
     return (
         <>
@@ -124,7 +124,7 @@ export default function CategoryForm({
                           mb={15}
                           withAsterisk
                           label="Title"
-                          placeholder="Category Title"
+                          placeholder="Collection Title"
                           {...form.getInputProps('title')}
                         />
                         <TextInput
@@ -145,13 +145,13 @@ export default function CategoryForm({
 
                     <Button
                       loading={
-                            categoryCreateMutation.isPending ||
-                            categoryUpdateMutation.isPending
+                            createMutation.isPending ||
+                            updateMutation.isPending
                         }
                       type="submit"
                       variant="light"
                     >
-                        {editCategory ? 'Update' : 'Create'} Category
+                        {editData ? 'Update' : 'Create'} Collection
                     </Button>
                 </Stack>
             </form>

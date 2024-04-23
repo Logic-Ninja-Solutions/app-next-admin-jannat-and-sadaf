@@ -23,7 +23,7 @@ import { useState } from 'react';
 import { deleteProduct } from '@/src/actions/product';
 import { ProductActionType } from '@/src/actions/product/enums';
 import InfiniteTable from '@/src/components/InfiniteTable';
-import ProductForm from '@/src/components/forms/product';
+import ProductForm from '@/src/components/forms/ProductForm/ProductForm';
 import { deleteInInfinteQuery } from '@/src/utils/api/pagination';
 import { Product } from '../../../../types/product';
 

@@ -23,13 +23,13 @@ import { useState } from 'react';
 import { deleteInInfinteQuery } from '@/src/utils/api/pagination';
 import InfiniteTable from '@/src/components/InfiniteTable';
 import serverInstance from '../../../../actions/api';
-import { CategoryActionType } from '../../../../actions/category/enums';
-import CategoryForm from '../../../../components/forms/category/CategoryForm';
-import { Category } from '../../../../types/category';
+import { CollectionActionType } from '../../../../actions/collection/enums';
+import CollectionForm from '../../../../components/forms/collection/CollectionForm';
+import { Collection } from '../../../../types/collection';
 
-export default function CategoryPage() {
+export default function CollectionPage() {
     const columns = ['Image', 'Title', 'Available', 'Actions'];
-    const [editCategory, setEditData] = useState<Category | undefined>(
+    const [editData, setEditData] = useState<Collection | undefined>(
         undefined,
     );
 
@@ -37,7 +37,7 @@ export default function CategoryPage() {
         'list',
     );
 
-    function onEditClick(data: Category) {
+    function onEditClick(data: Collection) {
         setEditData(undefined);
         setActiveTab('update');
         setEditData(data);
@@ -46,9 +46,9 @@ export default function CategoryPage() {
     const queryClient = useQueryClient();
 
     const deleteMutation = useMutation({
-        mutationKey: [CategoryActionType.deleteCategory],
+        mutationKey: [CollectionActionType.deleteCollection],
         mutationFn: async (id: string) => {
-            const response = await serverInstance.delete(`category/${id}`);
+            const response = await serverInstance.delete(`collection/${id}`);
             const { data } = response;
             return data;
         },
@@ -56,27 +56,27 @@ export default function CategoryPage() {
             if (data) {
                 deleteInInfinteQuery(
                     queryClient,
-                    [CategoryActionType.fetchCategorys],
+                    [CollectionActionType.fetchCollections],
                     data?.id ?? '',
                 );
                 notifications.show({
                     title: 'Success',
-                    message: 'Category deleted successfully',
+                    message: 'Collection deleted successfully',
                 });
             }
         },
     });
 
-    async function onDeleteClick(category: Category) {
-        if (confirm('Are you sure you want to delete this category?')) {
-            await deleteMutation.mutateAsync(category.id);
+    async function onDeleteClick(collection: Collection) {
+        if (confirm('Are you sure you want to delete this collection?')) {
+            await deleteMutation.mutateAsync(collection.id);
         }
     }
 
-    function render(category: Category) {
-        const { image } = category;
+    function render(collection: Collection) {
+        const { image } = collection;
         return (
-            <Table.Tr key={category.id}>
+            <Table.Tr key={collection.id}>
                 <Table.Td>
                     <Center>
                         <Image
@@ -86,15 +86,15 @@ export default function CategoryPage() {
                         />
                     </Center>
                 </Table.Td>
-                <Table.Td>{category.title}</Table.Td>
+                <Table.Td>{collection.title}</Table.Td>
                 <Table.Td>
-                    {category.isAvailable ? <IconCheck /> : <IconX />}
+                    {collection.isAvailable ? <IconCheck /> : <IconX />}
                 </Table.Td>
                 <Table.Td>
                     <Flex gap="md">
                         <ActionIcon
                           onClick={() => {
-                                onEditClick(category);
+                                onEditClick(collection);
                             }}
                         >
                             <IconEdit />
@@ -103,7 +103,7 @@ export default function CategoryPage() {
                         <ActionIcon
                           color="red"
                           onClick={() => {
-                                onDeleteClick(category);
+                                onDeleteClick(collection);
                             }}
                         >
                             <IconTrash />
@@ -119,36 +119,36 @@ export default function CategoryPage() {
             <Tabs value={activeTab} onChange={setActiveTab as any}>
                 <Tabs.List>
                     <Tabs.Tab leftSection={<IconList />} value="list">
-                        List Categories
+                        List Collections
                     </Tabs.Tab>
                     <Tabs.Tab leftSection={<IconCubePlus />} value="create">
-                        Create Category
+                        Create Collection
                     </Tabs.Tab>
                     <Tabs.Tab
-                      disabled={editCategory === undefined}
+                      disabled={editData === undefined}
                       leftSection={<IconEdit />}
                       value="update"
                     >
-                        Update Category
+                        Update Collection
                     </Tabs.Tab>
                 </Tabs.List>
 
                 <Tabs.Panel value="list">
                     <InfiniteTable
-                      fetchApi="/admin/api/category"
-                      queryKey={[CategoryActionType.fetchCategorys]}
+                      fetchApi="/admin/api/collection"
+                      queryKey={[CollectionActionType.fetchCollections]}
                       columns={columns}
                       render={render}
                     />
                 </Tabs.Panel>
 
                 <Tabs.Panel value="create">
-                    <CategoryForm
+                    <CollectionForm
                       onSuccess={() => {
                             setEditData(undefined);
                             notifications.show({
                                 title: 'Success',
-                                message: 'Category created successfully',
+                                message: 'Collection created successfully',
                             });
                             setActiveTab('list');
                         }}
@@ -157,18 +157,18 @@ export default function CategoryPage() {
 
                 <Tabs.Panel value="update">
                     <Box>
-                        {editCategory && (
-                            <CategoryForm
+                        {editData && (
+                            <CollectionForm
                               onSuccess={() => {
                                     setEditData(undefined);
                                     notifications.show({
                                         title: 'Success',
                                         message:
-                                            'Category updated successfully',
+                                            'Collection updated successfully',
                                     });
                                     setActiveTab('list');
                                 }}
-                              editData={editCategory}
+                              editData={editData}
                             />
                         )}
                     </Box>

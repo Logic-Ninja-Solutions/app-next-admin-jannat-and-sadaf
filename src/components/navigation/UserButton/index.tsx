@@ -45,8 +45,8 @@ export function UserButton() {
         <ActionIcon
           onClick={async () => {
             await unauthenticate();
-            router.replace('/');
             client.invalidateQueries();
+            window.location.reload();
           }}
         >
           <IconLogout

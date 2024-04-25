@@ -33,21 +33,28 @@ function LoginButton() {
   );
 }
 
-export default function SignIn() {
-  const [errorState, dispatch] = useFormState(authenticate, '');
+interface LoginFormState {
+  message: string;
+}
 
+export default function SignIn() {
+  const initialState: LoginFormState | null = {
+    message: '',
+  };
+
+  const [formState, formAction] = useFormState(authenticate, initialState);
   const router = useRouter();
 
   useEffect(() => {
-    if (errorState == null) {
+    if (formState == null) {
       router.replace('/admin');
     }
-  }, [errorState]);
+  }, [formState]);
 
   return (
     <Center h="100%">
       <Card radius="md" shadow="md" p="xl">
-        <form action={dispatch}>
+        <form action={formAction}>
           <Stack w={450} p="xl">
             <Title ta="center" className={classes.title}>
               Sign In
@@ -65,9 +72,9 @@ export default function SignIn() {
             />
             <PasswordInput placeholder="Your password" name="password" />
 
-            {errorState && (
+            {formState && (
               <Text c="red" ta="center">
-                {errorState}
+                {formState?.message}
               </Text>
             )}
 

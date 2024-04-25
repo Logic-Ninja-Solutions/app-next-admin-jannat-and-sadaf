@@ -46,7 +46,7 @@ export async function unauthenticate() {
 }
 
 export async function authenticate(
-    prevState: string | undefined | null,
+    prevState: { message: string } | null,
     formData: FormData
 ) {
     try {
@@ -57,7 +57,9 @@ export async function authenticate(
 
         return null;
     } catch (error: any) {
-        return error?.message ?? 'Something went wrong.';
+        return {
+            message: error?.response?.data?.message ?? 'Something went wrong.',
+        };
     }
 }
 

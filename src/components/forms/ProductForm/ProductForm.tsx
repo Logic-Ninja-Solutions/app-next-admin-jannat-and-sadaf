@@ -48,6 +48,7 @@ interface ProductFormValues {
   images: string[];
   variants: ProductVariant[];
   isAvailable: boolean;
+  isNew: boolean;
   code: string;
   collectionId?: string | null;
 }
@@ -81,6 +82,7 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
       variants: editData?.variants || [],
       images: editData?.images || [],
       isAvailable: editData?.isAvailable || true,
+      isNew: editData?.isNew || false,
       collectionId: undefined,
     },
   });
@@ -95,6 +97,7 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
         variants: editData.variants,
         images: editData.images,
         isAvailable: editData.isAvailable,
+        isNew: editData.isNew,
         collectionId: editData.collectionId,
       });
     }
@@ -246,7 +249,9 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   }
 
   async function fetchCollections() {
-    const response = await serverInstance.get<{ data: Collection[] }>('collection');
+    const response = await serverInstance.get<{ data: Collection[] }>(
+      'collection'
+    );
     return response.data?.data;
   }
 
@@ -295,6 +300,15 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
               checked={form.values.isAvailable}
               defaultChecked
               {...form.getInputProps('isAvailable')}
+            />
+
+            <Checkbox
+              mt={10}
+              style={{ cursor: 'pointer' }}
+              label="New Arrival"
+              checked={form.values.isNew}
+              defaultChecked
+              {...form.getInputProps('isNew')}
             />
           </Card>
           <Card withBorder shadow="sm" radius="md">

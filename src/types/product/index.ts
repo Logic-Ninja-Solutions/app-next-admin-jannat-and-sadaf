@@ -12,6 +12,7 @@ export interface Product {
     slug: string;
     code: string;
     isAvailable: boolean;
+    isNew: boolean;
     images: string[];
     variants: ProductVariant[];
     createdAt: Date;

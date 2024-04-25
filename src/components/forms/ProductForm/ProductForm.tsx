@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   Checkbox,
+  FileButton,
   Flex,
   Loader,
   NumberInput,
@@ -12,7 +13,7 @@ import {
   TextInput,
   useMantineTheme,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { useForm, UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { Link } from '@mantine/tiptap';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
@@ -24,16 +25,18 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import imageCompression from 'browser-image-compression';
 import {
   createInInfiniteQuery,
   updateInInfiniteQuery,
 } from '@/src/utils/api/pagination';
 import { ProductActionType } from '@/src/actions/product/enums';
 import serverInstance from '../../../actions/api';
+import { Collection } from '../../../types/collection';
 import { Product } from '../../../types/product';
 import TextEditor from '../../core/RichTextEditor';
-import { Collection } from '../../../types/collection';
+import FileUploadField from '../UploadFileField/UploadFileField';
 
 interface ProductVariant {
   size: string;
@@ -214,25 +217,17 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   ));
 
   const imageFields = form.values.images.map((item, index) => (
-    <Card.Section key={index} p="sm">
-      <Flex justify="center" align="center" wrap="wrap" gap={10}>
-        <Card w="1000px" withBorder shadow="xl" radius="md">
-          <TextInput
-            label="image"
-            placeholder="Inage Url"
-            withAsterisk
-            {...form.getInputProps(`images.${index}`)}
-          />
-        </Card>
-        <Box maw={30}>
-          <IconTrash
-            onClick={() => form.removeListItem('images', index)}
-            className="clickable"
-            color={theme.colors.red[3]}
-          />
-        </Box>
-      </Flex>
-    </Card.Section>
+    <FileUploadField
+      key={index}
+      entity="product"
+      form={form}
+      showDelete
+      onDelete={() => {
+        form.removeListItem('images', index);
+      }}
+      formFieldName={`images.${index}`}
+      formFieldValue={form.values.images[index]}
+    />
   ));
 
   function addVariant() {

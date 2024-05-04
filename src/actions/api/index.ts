@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { getAccessToken } from '../auth/server';
 
-const baseUrl = 'http://localhost:3000/api';
+const baseUrl = 'https://jannatandsadaf.com/api/';
 
 const serverInstance = axios.create({
     baseURL: baseUrl,

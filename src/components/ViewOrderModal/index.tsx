@@ -10,6 +10,7 @@ import {
   Loader,
   Modal,
   Stack,
+  Table,
   Text,
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
@@ -124,39 +125,71 @@ export default function ViewOrderInfoModal({
               <Divider my={10} />
               {items?.map((item, idx) => (
                 <Box key={idx}>
-                  <Flex gap={20} p="md">
-                    <Box pos="relative">
-                      <Image
-                        w={64}
-                        h={80}
-                        src={item.image}
-                        alt="Product Image"
-                      />
-                      <Chip
-                        pos="absolute"
-                        style={{
-                          top: 0,
-                          left: 0,
-                          zIndex: 10,
-                          marginLeft: '-1rem',
-                          marginTop: '-1rem',
-                        }}
-                      >
-                        {item.quantity}
-                      </Chip>
-                    </Box>
+                  <Card>
+                    <Flex gap={20} p="md">
+                      <Box pos="relative">
+                        <Image
+                          w={64}
+                          h={80}
+                          src={item.image}
+                          alt="Product Image"
+                        />
+                        <Chip
+                          pos="absolute"
+                          style={{
+                            top: 0,
+                            left: 0,
+                            zIndex: 10,
+                            marginLeft: '-1rem',
+                            marginTop: '-1rem',
+                          }}
+                        >
+                          {item.quantity}
+                        </Chip>
+                      </Box>
 
-                    <Stack gap={1}>
-                      <span>{item.title}</span>
-                      <span>{item.variant.size}</span>
-                      <Link
-                        target="_blank"
-                        href={`${domain}/product/${item.slug}`}
-                      >
-                        View Product
-                      </Link>
-                    </Stack>
-                  </Flex>
+                      <Stack gap={1}>
+                        <span>{item.title}</span>
+                        <span>{item.variant.size}</span>
+                        <Link
+                          target="_blank"
+                          href={`${domain}/product/${item.slug}`}
+                        >
+                          View Product
+                        </Link>
+                      </Stack>
+                    </Flex>
+                    {item.customSizePreference && (
+                      <>
+                        Size Preference:{' '}
+                        {item.customSizePreference === 'custom'
+                          ? 'Custom'
+                          : item.customSizePreference === 'callback'
+                          ? 'Requested Callback'
+                          : ''}
+                      </>
+                    )}
+                    {item.customSizePreference === 'custom' && (
+                      <Table>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th>Measurement</Table.Th>
+                            <Table.Th>Value</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {
+                            Object.entries(item.customSizeData).map(([key, value]) => (
+                              <Table.Tr key={key}>
+                                <Table.Td>{key}</Table.Td>
+                                <Table.Td>{value}</Table.Td>
+                              </Table.Tr>
+                            ))
+                          }
+                        </Table.Tbody>
+                      </Table>
+                    )}
+                  </Card>
                 </Box>
               ))}
             </Card>

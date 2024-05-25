@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   Checkbox,
-  FileButton,
   Flex,
   Loader,
   NumberInput,
@@ -13,7 +12,7 @@ import {
   TextInput,
   useMantineTheme,
 } from '@mantine/core';
-import { useForm, UseFormReturnType } from '@mantine/form';
+import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { Link } from '@mantine/tiptap';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
@@ -25,8 +24,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect, useState } from 'react';
-import imageCompression from 'browser-image-compression';
+import { useEffect } from 'react';
 import {
   createInInfiniteQuery,
   updateInInfiniteQuery,
@@ -40,9 +38,9 @@ import FileUploadField from '../UploadFileField/UploadFileField';
 
 interface ProductVariant {
   size: string;
-  quantity: number;
   price: number;
   isAvailable: boolean;
+  sizeMetadata?: { label: string; value: string }[];
 }
 
 interface ProductFormValues {
@@ -82,7 +80,11 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
       title: editData?.title || '',
       code: editData?.code || '',
       description: editData?.description || '',
-      variants: editData?.variants || [],
+      variants:
+        editData?.variants?.map((v) => ({
+          ...v,
+          sizeMetadata: v.sizeMetadata || [],
+        })) || [],
       images: editData?.images || [],
       isAvailable: editData?.isAvailable || true,
       isNew: editData?.isNew || false,
@@ -97,7 +99,11 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
         title: editData.title,
         code: editData.code,
         description: editData.description,
-        variants: editData.variants,
+        variants:
+          editData?.variants?.map((v) => ({
+            ...v,
+            sizeMetadata: v.sizeMetadata || [],
+          })) || [],
         images: editData.images,
         isAvailable: editData.isAvailable,
         isNew: editData.isNew,
@@ -173,6 +179,13 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
 
   form.values.description = editor?.getHTML() || '';
 
+  function addVariantSizeMetadata(index: number) {
+    form.insertListItem(`variants.${index}.sizeMetadata`, {
+      label: '',
+      value: '',
+    });
+  }
+
   const variantFields = form.values.variants.map((item, index) => (
     <Card.Section key={index} p="sm">
       <Flex justify="center" align="center" wrap="wrap" gap={10}>
@@ -190,12 +203,49 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
               withAsterisk
               {...form.getInputProps(`variants.${index}.price`)}
             />
-            <NumberInput
-              label="Quantity"
-              placeholder="Quantity (e.g. 10)"
-              withAsterisk
-              {...form.getInputProps(`variants.${index}.quantity`)}
-            />
+
+            <Stack gap={5}>
+              {form.values.variants[index].sizeMetadata?.map((_, subIndex) => (
+                <Flex align="center" gap={5} key={subIndex}>
+                  <TextInput
+                    label="Label"
+                    placeholder="Label (e.g. Small)"
+                    {...form.getInputProps(
+                      `variants.${index}.sizeMetadata.${subIndex}.label`
+                    )}
+                  />
+                  <NumberInput
+                    label="Value (inches)"
+                    placeholder="Value (e.g. 10)"
+                    {...form.getInputProps(
+                      `variants.${index}.sizeMetadata.${subIndex}.value`
+                    )}
+                  />
+                  <Box mt={25}>
+                    <IconTrash
+                      onClick={() =>
+                        form.removeListItem(
+                          `variants.${index}.sizeMetadata`,
+                          subIndex
+                        )
+                      }
+                      className="clickable"
+                      color={theme.colors.red[3]}
+                    />
+                  </Box>
+                </Flex>
+              ))}
+              <Button
+                w={200}
+                my={10}
+                size="sm"
+                variant="light"
+                onClick={() => addVariantSizeMetadata(index)}
+              >
+                Add Size Metadata
+              </Button>
+            </Stack>
+
             <Checkbox
               mt={5}
               style={{ cursor: 'pointer' }}
@@ -233,9 +283,9 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   function addVariant() {
     form.insertListItem('variants', {
       size: '',
-      quantity: null,
       price: null,
       isAvailable: true,
+      sizeMetadata: [],
     });
   }
 

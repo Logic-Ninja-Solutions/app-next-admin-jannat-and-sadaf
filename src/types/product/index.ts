@@ -1,8 +1,8 @@
 export interface ProductVariant {
     size: string;
-    quantity: number;
     price: number;
     isAvailable: boolean;
+    sizeMetadata?: { label: string; value: string }[];
 }
 
 export interface Product {
@@ -19,4 +19,5 @@ export interface Product {
     updatedAt: Date;
     userId?: string | null;
     collectionId?: string | null;
+    isCustomizable?: boolean;
 }

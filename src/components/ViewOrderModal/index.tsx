@@ -38,8 +38,8 @@ export default function ViewOrderInfoModal({
     enabled: !!order?.id,
   });
 
-  const user = data?.user;
-  const address = data?.address;
+  const user = data?.userId;
+  const address = data?.addressId;
   const items = data?.items;
 
   return (

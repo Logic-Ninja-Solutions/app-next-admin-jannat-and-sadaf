@@ -2,13 +2,14 @@
 
 import serverInstance from '../api';
 import { OrderStatus } from './enums';
-import { Order } from '../../types/order';
+import { Order, SingleOrder } from '../../types/order';
 
 // --------
 
 export async function getOrder(orderID?: string) {
-  const response = await serverInstance.get<Order>(`order/${orderID}`);
-  return response.data;
+  const response = await serverInstance.get<SingleOrder>(`order/${orderID}`);
+  const order = response.data;
+  return order;
 }
 
 export async function updateStatus(id: string, status: OrderStatus) {

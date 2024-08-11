@@ -53,3 +53,19 @@ export interface Order {
     addressId: string;
     user?: User;
 }
+
+export interface SingleOrder {
+  id: string;
+  orderNumber: string;
+  items: CartItem[];
+  shippingPrice: number;
+  paymentMethod: string;
+  totalPrice: number;
+  address: Address;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId?: User;
+  addressId: Address;
+  user?: User;
+}

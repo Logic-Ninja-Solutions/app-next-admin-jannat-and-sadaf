@@ -25,6 +25,7 @@ import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffect } from 'react';
+import slugify from 'slugify';
 import {
   createInInfiniteQuery,
   updateInInfiniteQuery,
@@ -266,10 +267,14 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
     </Card.Section>
   ));
 
+  const productSlug = slugify(form.values.title, {
+    lower: true,
+  });
+
   const imageFields = form.values.images.map((item, index) => (
     <FileUploadField
       key={index}
-      entity="product"
+      entity={`product-${productSlug}`}
       form={form}
       showDelete
       onDelete={() => {
@@ -290,6 +295,14 @@ export default function ProductForm({ editData, onSuccess }: ProductFormProps) {
   }
 
   function addImage() {
+    if (!form.values.title) {
+      notifications.show({
+        title: 'Error',
+        message: 'Please enter the title first',
+        color: 'red',
+      });
+      return;
+    }
     form.insertListItem('images', '');
   }
 

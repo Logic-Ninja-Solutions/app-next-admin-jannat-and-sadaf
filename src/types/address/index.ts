@@ -10,3 +10,13 @@ export interface Address {
     isDefault?: boolean | null;
     userId?: string | null;
 }
+
+export interface GuestAddress {
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    firstName: string;
+    lastName: string;
+    contactNumber: string;
+    zipCode: string;
+  }

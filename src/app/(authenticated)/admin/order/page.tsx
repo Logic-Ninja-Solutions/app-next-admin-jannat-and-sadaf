@@ -62,6 +62,7 @@ function OrderInfo({ order, onViewOrder }: OrderInfoProps) {
                     <Group mb={2} justify="space-between" align="center">
                         <div>
                             <Chip>Order# {order.orderNumber}</Chip>
+                            <Chip>Payment Method {order.paymentMethod}</Chip>
                         </div>
                         <Chip>{order.status}</Chip>
                     </Group>
@@ -112,7 +113,7 @@ function OrderInfo({ order, onViewOrder }: OrderInfoProps) {
                         <Flex>
                             <Button onClick={onViewOrder}>View Order</Button>
                         </Flex>
-                        <Text>Total Price: ${order.totalPrice}</Text>
+                        <Text>Total Price: PKR {order.totalPrice}</Text>
                     </Flex>
                 </Card.Section>
 

@@ -39,8 +39,10 @@ export default function ViewOrderInfoModal({
   });
 
   const user = data?.userId;
-  const address = data?.addressId;
+  const address = data?.addressId ?? order?.guestAddressInfo;
   const items = data?.items;
+
+  const isGuest = !data?.userId;
 
   return (
     <>
@@ -55,33 +57,46 @@ export default function ViewOrderInfoModal({
               <Card.Section withBorder inheritPadding py="xs">
                 <Text fw={500}>User Info</Text>
               </Card.Section>
-              <Stack gap={10}>
-                <Group justify="space-between">
-                  <Text>First Name</Text>
-                  <Text>{user?.firstName}</Text>
-                </Group>
-                <Group justify="space-between">
-                  <Text>Last Name</Text>
-                  <Text>{user?.lastName}</Text>
-                </Group>
 
-                <Group justify="space-between">
-                  <Text>Email</Text>
-                  <Text>{user?.email}</Text>
-                </Group>
+              {isGuest ? (
+                <>
+                  <Stack gap={10}>
+                    <Group justify="space-between">
+                      <Text>Guest User</Text>
+                    </Group>
+                  </Stack>
+                </>
+              ) : (
+                <Stack gap={10}>
+                  <Group justify="space-between">
+                    <Text>First Name</Text>
+                    <Text>{user?.firstName}</Text>
+                  </Group>
+                  <Group justify="space-between">
+                    <Text>Last Name</Text>
+                    <Text>{user?.lastName}</Text>
+                  </Group>
 
-                <Group justify="space-between">
-                  <Text>Phone</Text>
-                  <Text>{user?.phone}</Text>
-                </Group>
-              </Stack>
+                  <Group justify="space-between">
+                    <Text>Email</Text>
+                    <Text>{user?.email}</Text>
+                  </Group>
+
+                  <Group justify="space-between">
+                    <Text>Phone</Text>
+                    <Text>{user?.phone}</Text>
+                  </Group>
+                </Stack>
+              )}
             </Card>
 
             <Divider my={10} />
 
             <Card withBorder shadow="md" radius="md" p="md">
               <Card.Section withBorder inheritPadding py="xs">
-                <Text fw={500}>Address</Text>
+                <Text fw={500}>
+                  {isGuest ? 'Guest Address' : 'User Address'}
+                </Text>
               </Card.Section>
               <Stack gap={10}>
                 <Group>
@@ -159,7 +174,7 @@ export default function ViewOrderInfoModal({
                         </Link>
                       </Stack>
                     </Flex>
-                    {item.customSizePreference && (
+                    {item.customSizePreference && item.variant.size === 'Custom' && (
                       <>
                         Size Preference:{' '}
                         {item.customSizePreference === 'custom'
@@ -178,14 +193,14 @@ export default function ViewOrderInfoModal({
                           </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                          {
-                            Object.entries(item.customSizeData).map(([key, value]) => (
+                          {Object.entries(item.customSizeData).map(
+                            ([key, value]) => (
                               <Table.Tr key={key}>
                                 <Table.Td>{key}</Table.Td>
                                 <Table.Td>{value}</Table.Td>
                               </Table.Tr>
-                            ))
-                          }
+                            )
+                          )}
                         </Table.Tbody>
                       </Table>
                     )}
